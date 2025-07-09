@@ -14,7 +14,7 @@ def converter_resultados():
         root.withdraw()
 
         # SELECIONAR ARQUIVO DE ENTRADA
-        messagebox.showinfo("Conversor de Lotofácil",
+        messagebox.showinfo("Conversor de resultados de loteria",
                             "Selecione sua planilha Excel (.xlsx) com os resultados.")
 
         input_path = filedialog.askopenfilename(
@@ -34,8 +34,14 @@ def converter_resultados():
         # colunas de interesse (A: concurso, C - Q: bolas lotomania).
         # Para adaptar a outros concursos, só editar as colunas, com o número de bolas
         # começando na letra C. No caso, lotofácil são 15 letras, começando em C.
-        # Coluna A = 0. Colunas C a Q = 2 a 16.
-        colunasLer = [0] + list(range(2, 17))
+        # Coluna A = 0. Coluna C = 2.
+        # LOTOFACIL = 15 bolas
+        # LOTOMANIA = 20 bolas
+
+        tipo = int(input('Digite o número de bolas'))
+        colunasLer = [0] + list(range(2,2+tipo))
+        # 2+tipo: começando pela coluna 2 (C), lê a quantidade de colunas de acordo
+        # com a quantidade de bolas
 
         # le a planilha, sendo a primeira linha cabeçalho, lendo só as colunas necessarias
         df = pd.read_excel(input_path, header=None, usecols=colunasLer, dtype=object)

@@ -2,16 +2,45 @@ import pandas as pd
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
+def selecionarLoteria(root):
+    """
+    Cria janela de seleção de loteria.
+    Retorna a quantidade de bolas correspondente.
+    """
+    qtdBolas = tk.IntVar(value=0)
+    janelaSelecao = tk.Toplevel(root)
+    janelaSelecao.geometry("400x400")
+    janelaSelecao.title("Selecione a loteria")
+    janelaSelecao.resizable(False, False)
+    def onclick(qtd):
+        qtdBolas.set(qtd)
+        janelaSelecao.destroy()
 
-def converter_resultados():
+    tk.Button(janelaSelecao, text="Lotomania", command=lambda: onclick(20)).pack(fill='x', padx=20, pady=5)
+    tk.Button(janelaSelecao, text="Lotofácil", command=lambda: onclick(15)).pack(fill='x', padx=20, pady=5)
+    tk.Button(janelaSelecao, text="Mega-Sena", command=lambda: onclick(6)).pack(fill='x', padx=20, pady=5)
+    tk.Button(janelaSelecao, text="Quina", command=lambda: onclick(5)).pack(fill='x', padx=20, pady=5)
+    tk.Button(janelaSelecao, text="Dupla Sena", command=lambda: onclick(6)).pack(fill='x', padx=20, pady=5)
+
+    root.wait_window(janelaSelecao)
+    return qtdBolas.get()
+def converterResultados():
     """
     Lê uma planilha de resultados da loteria,
-    formata os dados e salva em um arquivo de texto.
+    formata os dados para o padrão usado no programa
+    LMania e salva em um arquivo de texto.
     """
     try:
         # cria uma janela raiz escondida, para poder mostrar as caixas de diálogo
         root = tk.Tk()
         root.withdraw()
+
+        # SELECIONAR LOTERIA
+        qtdBolas = selecionarLoteria(root)
+
+        if qtdBolas == 0: # se usuário fechar janela
+            print("Nenhuma loteria foi selecionada. O programa será encerrado.")
+            return
 
         # SELECIONAR ARQUIVO DE ENTRADA
         messagebox.showinfo("Conversor de resultados de loteria",
@@ -37,21 +66,19 @@ def converter_resultados():
         # Coluna A = 0. Coluna C = 2.
         # LOTOFACIL = 15 bolas
         # LOTOMANIA = 20 bolas
-
-        tipo = int(input('Digite o número de bolas'))
-        colunasLer = [0] + list(range(2,2+tipo))
+        colunasLer = [0] + list(range(2,2+qtdBolas))
+        print('1')
         # 2+tipo: começando pela coluna 2 (C), lê a quantidade de colunas de acordo
         # com a quantidade de bolas
 
         # le a planilha, sendo a primeira linha cabeçalho, lendo só as colunas necessarias
         df = pd.read_excel(input_path, header=None, usecols=colunasLer, dtype=object)
-
+        print('2')
         linhasFormatadas = []
 
         # nomes reais das colunas lidas do arquivo
         colunaConcurso = df.columns[0]
         colunasBolas = df.columns[1:]
-
         print("Processando os concursos...")
 
         # loop pra cada linha da planilha
@@ -113,4 +140,4 @@ def converter_resultados():
 
 
 if __name__ == "__main__":
-    converter_resultados()
+    converterResultados()
